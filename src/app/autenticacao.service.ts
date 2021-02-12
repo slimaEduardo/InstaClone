@@ -3,6 +3,7 @@ import firebase from "firebase";
 import { Usuario } from "./usuario.model";
 
 export class Autenticacao{
+   
     public cadastrarUsuario(usuario: Usuario): void{
        /*  console.log('Chegamos ao servico com:', usuario) */
         firebase.auth().createUserWithEmailAndPassword(usuario.email, usuario.senha)
@@ -18,4 +19,11 @@ export class Autenticacao{
             console.log(error)
         })
     }
+
+    public autenticar(email: string, senha: string): void {
+        console.log(email,senha)
+       firebase.auth().signInWithEmailAndPassword(email, senha)
+       .then((resposta: any) => console.log(resposta))
+       .catch((error: Error) => console.log(error))
+      }
 }
