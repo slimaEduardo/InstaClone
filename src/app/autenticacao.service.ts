@@ -1,12 +1,14 @@
 
-import firebase from "firebase/app";
+import firebase from "firebase/";
 import { Usuario } from "./usuario.model";
 
 export class Autenticacao{
+
+    public token_id: string
    
-    public cadastrarUsuario(usuario: Usuario): void{
+    public cadastrarUsuario(usuario: Usuario): Promise<any>{
        /*  console.log('Chegamos ao servico com:', usuario) */
-        firebase.auth().createUserWithEmailAndPassword(usuario.email, usuario.senha)
+       return firebase.auth().createUserWithEmailAndPassword(usuario.email, usuario.senha)
         .then((resposta: any) => {
 
             //remove a senha do usuario antes de salvar os dados no banco
@@ -23,7 +25,13 @@ export class Autenticacao{
     public autenticar(email: string, senha: string): void {
         console.log(email,senha)
        firebase.auth().signInWithEmailAndPassword(email, senha)
-       .then((resposta: any) => console.log(resposta))
+       .then((resposta: any) => {
+           firebase.auth().currentUser.getIdToken()
+           .then((idToken: string)=>{
+            this.token_id = idToken
+            console.log(this.token_id)
+           })
+        })
        .catch((error: Error) => console.log(error))
       }
 }
