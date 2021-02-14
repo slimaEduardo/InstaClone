@@ -7,6 +7,7 @@ import { Usuario } from "./usuario.model";
 
 @Injectable()
 export class Autenticacao{
+  
     
 
     public token_id: string
@@ -49,5 +50,16 @@ export class Autenticacao{
             this.token_id = localStorage.getItem('idToken')
         }
          return this.token_id !== undefined
+    }
+
+    public sair(): void {
+
+        firebase.auth().signOut()
+        .then(() => {
+            localStorage.removeItem('idToken')
+            this.token_id == undefined
+            this.router.navigate(['/'])
+        })
+                
     }
 }
