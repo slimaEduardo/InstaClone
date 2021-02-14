@@ -7,6 +7,7 @@ import { Usuario } from "./usuario.model";
 
 @Injectable()
 export class Autenticacao{
+    
 
     public token_id: string
 
@@ -40,4 +41,8 @@ export class Autenticacao{
         })
        .catch((error: Error) => console.log(error))
       }
+
+      public autenticado(): boolean {
+         return this.token_id !== undefined
+    }
 }
