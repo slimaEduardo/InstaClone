@@ -29,8 +29,7 @@ export class CadastroComponent implements OnInit {
   }
 
   public cadastrarUsuario(): void {
-    console.log(this.formulario)
-    let usuario: Usuario = new Usuario(
+     let usuario: Usuario = new Usuario(
       this.formulario.value.email,
       this.formulario.value.nome_completo,
       this.formulario.value.nome_usuario,

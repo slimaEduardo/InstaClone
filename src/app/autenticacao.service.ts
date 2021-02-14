@@ -11,6 +11,7 @@ export class Autenticacao{
     
 
     public token_id: string
+    public message: string;
 
     constructor(private router: Router){ }
    
@@ -30,9 +31,8 @@ export class Autenticacao{
         })
     }
 
-    public autenticar(email: string, senha: string): void {
-        console.log(email,senha)
-       firebase.auth().signInWithEmailAndPassword(email, senha)
+    public autenticar(email: string, senha: string): Promise<any> {
+    return firebase.auth().signInWithEmailAndPassword(email, senha)
        .then((resposta: any) => {
            firebase.auth().currentUser.getIdToken()
            .then((idToken: string)=>{
@@ -41,7 +41,9 @@ export class Autenticacao{
             this.router.navigate(['/home'])
            })
         })
-       .catch((error: Error) => console.log(error))
+       .catch((error: Error) => {
+           this.message = error.message
+       })
       }
 
       public autenticado(): boolean {

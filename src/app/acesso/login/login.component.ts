@@ -7,12 +7,12 @@ import { Autenticacao } from 'src/app/autenticacao.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
-})
+  styleUrls: ['./login.component.css'],
+ })
 export class LoginComponent implements OnInit {
 
   @Output() public exibirPainel: EventEmitter<string> = new EventEmitter<string>()
-
+  public errorMessage: string
   public formulario: FormGroup = new FormGroup({
     'email': new FormControl(null),
     'senha': new FormControl(null)
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
   }
 
   public exibirPainelCadastro(): void {
-    this.exibirPainel.emit('cadastro')
+    this.exibirPainel.emit('cadastro') 
   }
 
   public autenticar(): void {
@@ -32,5 +32,8 @@ export class LoginComponent implements OnInit {
       this.formulario.value.email,
       this.formulario.value.senha
     )
+    .then(() => {
+      this.errorMessage = this.autenticacao.message;
+    })
   }
 }
