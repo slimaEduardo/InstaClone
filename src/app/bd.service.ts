@@ -47,7 +47,7 @@ export class Bd {
      public consultaPublicacoes(emailUsuario: string): Promise<any> {
 
        return new Promise((resolve, reject) => {
-        firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+        firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`).orderByKey()
         .once('value')
         .then((snapshot: any) => {
             //console.log(snapshot.val())
