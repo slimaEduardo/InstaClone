@@ -1,7 +1,9 @@
 
-import { Injectable } from "@angular/core"
-import firebase from "firebase"
-import { Progresso } from "./progresso.service"
+import { Injectable } from "@angular/core";
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/storage';
+import { Progresso } from "./progresso.service";
 
 @Injectable()
 export class Bd {

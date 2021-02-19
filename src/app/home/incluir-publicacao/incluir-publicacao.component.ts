@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+
 import { Observable, interval, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Bd } from 'src/app/bd.service';
