@@ -5,19 +5,25 @@ import { Progresso } from "./progresso.service"
 
 @Injectable()
 export class Bd {
+    
 
     constructor(private progresso: Progresso){}
 
     public publicar(publicacao: any): void {
        
-        let nomeImagem = Date.now()
+        //let nomeImagem = Date.now()
 
-        firebase.storage().ref()
+        firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
+        .push({titulo: publicacao.titulo})
+        .then((resposta: any) => {
+            let nomeImagem = resposta.key
+            console.log(nomeImagem)
+            firebase.storage().ref()
         .child(`imagens/${nomeImagem}`)
         .put(publicacao.imagem)
         .on(firebase.storage.TaskEvent.STATE_CHANGED,
-            /* Evento on() armazena os eventos
-        da tarefa de upload pro storage do firebase*/
+       //Evento on() armazena os eventos
+       // da tarefa de upload pro storage do firebase
             (snapshot: any) => {
                 //aqui iremos acompanhar o progresso do upload
                 this.progresso.status = 'andamento'
@@ -31,9 +37,16 @@ export class Bd {
             ()=>{
                 this.progresso.status = 'concluido'
                // console.log("upload completo")
+               
             })
-       /*  firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
-        .push({titulo: publicacao.titulo}) */
-        
-    }
+        })
+     }
+
+     public consultaPublicacoes(emailUsuario: string): any {
+       firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+       .once('value')
+       .then((snapshot: any) => {
+           console.log(snapshot.val())
+       })
+      } 
 }

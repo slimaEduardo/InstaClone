@@ -16,7 +16,7 @@ export class IncluirPublicacaoComponent implements OnInit {
   public email: string
   public imagem: any
   public progressoPublicacao: string = 'pendente'
-  public porcentagemUpload: string
+  public porcentagemUpload: number
 
   public formulario: FormGroup = new FormGroup({
     'titulo': new FormControl(null)
@@ -34,29 +34,26 @@ export class IncluirPublicacaoComponent implements OnInit {
     this.bd.publicar({
       email: this.email,
       titulo: this.formulario.value.titulo,
-      imagem: this.imagem[0]
+     imagem: this.imagem[0]
     })
 
-    let acompanhamentoUpload = interval(500);
-    let continua = new Subject<boolean>();
-    continua.next (true);
-
-    acompanhamentoUpload.pipe (
-      takeUntil (continua)
-    ).subscribe (() => {
-      console.log (this.progresso.estado);
-      console.log (this.progresso.status);
-      this.progressoPublicacao = 'andamento'
-      let porcentagem: number = (this.progresso.estado.bytesTransferred /  this.progresso.estado.totalBytes) * 100
-      this.porcentagemUpload = porcentagem.toFixed()
-      console.log(this.progresso.estado.bytesTransferred)
-      console.log(this.progresso.estado.totalBytes)
-      console.log(this.porcentagemUpload)
-      if (this.progresso.status === 'concluido') {
-        this.progressoPublicacao = 'concluido'
-        continua.next (false);
-      }
-    });
+    let continua = new Subject()
+    let acompanhamentoUpload = interval(1500).pipe(takeUntil(continua))
+    continua.next(true)
+ 
+    //assinando observable para leitura e acompanhamento do progresso de upload
+    acompanhamentoUpload
+    .subscribe(() => {
+    
+        this.progressoPublicacao = 'andamento'
+ 
+        this.porcentagemUpload = Math.round(( this.progresso.estado.bytesTransferred / this.progresso.estado.totalBytes ) * 100)
+        
+        if(this.progresso.status === 'concluido') {
+          this.progressoPublicacao = 'concluido'
+          continua.next(false)
+        }
+      })
     
   }
 
