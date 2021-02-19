@@ -47,35 +47,49 @@ export class Bd {
      public consultaPublicacoes(emailUsuario: string): Promise<any> {
 
        return new Promise((resolve, reject) => {
-        firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`).orderByKey()
-        .once('value')
+        //consultar as publicações em database
+        firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+        .orderByKey()
+        /* método on, é um listening que ficará ouvindo este path e notificará 
+            a aplicação sobre qualquer mudança que tiver neste path.
+            O método once só fará uma única consulta no momento que o método é executado */
+        .once("value")
         .then((snapshot: any) => {
-            //console.log(snapshot.val())
- 
-            let publicacoes: Array<any> = [];
- 
+            // console.log(snapshot.val())
+
+            let publicacoes: Array<any> = []
+
             snapshot.forEach((childSnapshot: any) => {
- 
-             let publicacao = childSnapshot.val()
-                //consultar a url da imagem
-                firebase.storage().ref()
-                .child(`imagens/${childSnapshot.key}`)
-                .getDownloadURL()
-                .then((url: string) => {
-                    publicacao.url_imagem = url
-                     firebase.database().ref(`usuario_detalhe/${btoa(emailUsuario)}`)
-                     .once('value')
-                     .then((snapshot: any) => {
-                        publicacao.nome_usuario = snapshot.val().nome_usuario
-                        publicacoes.push(publicacao)
-                     })
-                 
-                })
-            });
- 
-            resolve(publicacoes)
+                let publicacao = childSnapshot.val()
+                publicacao.key = childSnapshot.key
+                publicacoes.push(publicacao)
+
+
+            })
+            // resolve(publicacoes)
+            return publicacoes.reverse()
         })
-       })
+        .then((publicacoes: any) => {
+            publicacoes.forEach((publicacao) => {
+                firebase.storage().ref()
+                    .child(`imagens/${publicacao.key}`)
+                    .getDownloadURL()
+                    .then((url: string) => {
+                        publicacao.url_imagem = url
+
+                        //consultar o nome do usuário
+                        firebase.database().ref(`usuario_detalhe/${btoa(emailUsuario)}`)
+                            .once("value")
+                            .then((snapshot: any) => {
+                                publicacao.nome_usuario = snapshot.val().nome_usuario
+                                publicacoes.push(publicacao)
+                            })
+                    })
+            })
+            resolve(publicacoes)
+
+        })
+    })
       
       } 
 }
